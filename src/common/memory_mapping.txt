@@ -1,0 +1,7 @@
+## Memory Mappings
+
+```
+0x00000000 - 0x08000000: Memory(128MB)
+0x08000000 - 0x08100000: Device Mapped memory(1MB)
+0x08100000 - 0x08101000: Performance Counters(4KB)
+```

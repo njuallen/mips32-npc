@@ -1,0 +1,119 @@
+all: emulator
+
+common := $(srcDir)/emulator/common
+
+MK_TARGET_PROC ?= rv32_1stage
+
+CXXFLAGS := $(CXXFLAGS) -O1 -std=c++11  -g -Wall -Werror
+
+CXXFLAGS := $(CXXFLAGS) -I$(common)
+
+# what does -Wl, -rpath -L. mean?
+LDFLAGS := $(LDFLAGS) -Wl,-rpath -L. -lpthread -lreadline
+
+CHISEL_ARGS := -td emulator/${MK_TARGET_PROC}/generated-src
+
+generated-src/Top.v: $(srcDir)/src/${MK_TARGET_PROC}/*.scala $(srcDir)/src/common/*.scala
+	cd $(buildDir) && $(SBT) "project ${MK_TARGET_PROC}" "run $(CHISEL_ARGS)"
+
+generated_dir = $(srcDir)/emulator/${MK_TARGET_PROC}
+
+# Run Verilator to produce a fast binary to emulate this circuit.
+VERILATOR := verilator --cc --exe 
+VERILATOR_FLAGS := --top-module Top \
+  +define+PRINTF_COND=1 \
+  --assert \
+  --output-split 20000 \
+	--x-assign unique \
+  -O3 -CFLAGS "$(CXXFLAGS) -DVERILATOR"
+
+common_src := $(wildcard $(common)/*.cpp)
+common_h := $(wildcard $(common)/*.h)
+
+emulator: generated-src/Top.v $(common)/AsyncReadMem.sv $(common_src) $(common_h)
+	$(VERILATOR) $(VERILATOR_FLAGS) \
+	-o $(generated_dir)/$@ $< $(common)/AsyncReadMem.sv $(common)/Device.v \
+	-LDFLAGS "$(LDFLAGS)" $(common_src)
+	$(MAKE) -C $(generated_dir)/obj_dir -f VTop.mk
+ 
+clean:
+	rm -rf *.o *.a emulator obj_dir emulator-debug generated-src generated-src-debug DVEfiles output
+
+clean-tests:
+	rm -rf output/*.out
+
+#--------------------------------------------------------------------
+# Tests
+#--------------------------------------------------------------------
+
+# Globally installed assembly tests
+global_tstdir = $(install)/riscv-tests
+
+global_asm_tests += \
+	rv32ui-p-simple \
+	rv32ui-p-add \
+	rv32ui-p-addi \
+	rv32ui-p-auipc \
+
+# Globally installed benchmarks
+global_bmarkdir = $(install)/riscv-bmarks
+global_bmarks = \
+	median \
+	multiply \
+	qsort \
+	rsort \
+	towers \
+	vvadd 
+
+#--------------------------------------------------------------------
+# Run assembly tests and benchmarks
+#--------------------------------------------------------------------
+    
+global_bmarks_out = $(addsuffix .riscv.out, $(global_bmarks))
+global_bmarks_vcd = $(addsuffix .riscv.vcd, $(global_bmarks))
+global_bmarks_outgz = $(addsuffix .riscv.out.gz, $(global_bmarks))
+global_bmarks_vpd = $(addsuffix .riscv.vpd, $(global_bmarks))
+global_bmarks_crosscheck = $(addsuffix .riscv.crosscheck, $(global_bmarks))
+
+asm_test_timeout ?=30000
+bmark_timeout ?=1000000
+                           
+output:
+	mkdir -p $@
+
+output/%.out: $(global_tstdir)/% emulator
+	mkdir -p output
+	./emulator +max-cycles=$(asm_test_timeout) +loadmem=$< none $(disasm_exe) $@
+
+# crosscheck for asm-tests
+output/%.crosscheck: $(global_tstdir)/% emulator
+	@# the rv32_1stage processor is the reference implementation
+	@make -C $(srcDir)/emulator/rv32_1stage emulator
+	@mkdir -p output
+	@# args: emulator_a emulator_b loadmem trace_output timeout
+	@python $(srcDir)/emulator/common/crosscheck.py $(srcDir)/emulator/rv32_1stage/emulator emulator $< $@ $(asm_test_timeout)
+
+$(addprefix output/, $(global_bmarks_out)): output/%.riscv.out: $(global_bmarkdir)/%.riscv emulator
+	mkdir -p output
+	./emulator +max-cycles=$(bmark_timeout) +verbose +loadmem=$< none $(disasm_exe) $@
+
+$(addprefix output/, $(global_bmarks_crosscheck)): output/%.riscv.crosscheck: $(global_bmarkdir)/%.riscv emulator
+	@# the rv32_1stage processor is the reference implementation
+	@make -C $(srcDir)/emulator/rv32_1stage emulator
+	@mkdir -p output
+	@# args: emulator_a emulator_b loadmem trace_output timeout
+	@python $(srcDir)/emulator/common/crosscheck.py $(srcDir)/emulator/rv32_1stage/emulator emulator $< $@ $(bmark_timeout)
+ 
+run-asm-tests: $(addprefix output/, $(addsuffix .out, $(global_asm_tests)))
+	@echo; perl -ne 'print "  [$$1] $$ARGV \t$$2\n" if /\*{3}(.{8})\*{3}(.*)/' $^; echo;
+#run-bmarks-test: $(addprefix output/, $(addsuffix .riscv.out.gz, $(global_bmarks)))
+run-bmarks-test: $(addprefix output/, $(addsuffix .riscv.out, $(global_bmarks)))
+	@echo; perl -ne 'print "  [$$1] $$ARGV \t$$2\n" if /\*{3}(.{8})\*{3}(.*)/' $^; echo;
+
+# allen: well, I do not know how to write perl scripts
+run-crosscheck-asm-tests: $(addprefix output/, $(addsuffix .crosscheck, $(global_asm_tests)))
+run-crosscheck-bmarks-test: $(addprefix output/, $(addsuffix .riscv.crosscheck, $(global_bmarks)))
+
+run: run-asm-tests run-bmarks-test
+run-crosscheck: run-crosscheck-asm-tests run-crosscheck-bmarks-test
+
