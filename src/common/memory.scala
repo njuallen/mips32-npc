@@ -235,16 +235,12 @@ class AsyncScratchPadMemory(num_core_ports: Int)(implicit conf: SodorConfigurati
 
   val dmem_req = crossbars(DPORT).io.out_1.req.bits
 
-  async_data.io.dw.en := (dmem_req.op === S_XWR)
-
-  when (crossbars(DPORT).io.out_1.req.valid && (dmem_req.op === S_XWR))
-  {
-    // printf("data= 0x%x wstrb= %d ", dmem_req.data, dmem_req.wstrb)
-    async_data.io.dw.data := dmem_req.data << (dmem_req.addr(1,0) << 3)
-    async_data.io.dw.addr := Cat(dmem_req.addr(31,2), 0.asUInt(2.W))
-    async_data.io.dw.mask := Mux(dmem_req.wstrb === STRB_B, 1.U << dmem_req.addr(1,0),
-      Mux(dmem_req.wstrb === STRB_H, 3.U << dmem_req.addr(1,0), 15.U))
-  }
+  val dw_en = crossbars(DPORT).io.out_1.req.valid && (dmem_req.op === S_XWR)
+  async_data.io.dw.en := dw_en
+  async_data.io.dw.data := dmem_req.data << (dmem_req.addr(1,0) << 3)
+  async_data.io.dw.addr := Cat(dmem_req.addr(31,2), 0.asUInt(2.W))
+  async_data.io.dw.mask := Mux(dmem_req.wstrb === STRB_B, 1.U << dmem_req.addr(1,0),
+    Mux(dmem_req.wstrb === STRB_H, 3.U << dmem_req.addr(1,0), 15.U))
 
   // DPORT
   // only dport crossbar needs to be connected to device and perf counters

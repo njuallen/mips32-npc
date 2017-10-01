@@ -37,7 +37,7 @@ class WBU extends Module
     (io.csr.valid)  -> io.csr.bits.wen))
 
   val waddr = MuxCase(0.asUInt(5.W), Array(
-    (io.alu.valid)  -> io.bru.bits.rd,
+    (io.alu.valid)  -> io.alu.bits.rd,
     (io.bru.valid)  -> io.bru.bits.rd,
     (io.lsu.valid)  -> io.lsu.bits.rd,
     (io.csr.valid)  -> io.csr.bits.rd))

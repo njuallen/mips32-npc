@@ -83,8 +83,9 @@ def si(emu_in, emu_out):
     return code, output
 
 
-def cross_check(in_a, out_a, in_b, out_b, program, trace):
+def cross_check(emu_a, in_a, out_a, emu_b, in_b, out_b, program, trace):
     instr_count = 0
+    ret = 0
     with open(trace, "w") as f:
         while True:
             code_a, output_a = si(in_a, out_a)
@@ -101,10 +102,12 @@ def cross_check(in_a, out_a, in_b, out_b, program, trace):
                 elif code_a == 1:
                     # both succeeds
                     print "[ %s ] %s after %d instructions" % (green("PASSED"), program, instr_count)
+                    ret = 0
                     break
                 else:
                     # both failed
                     print "[ %s ] %s after %d instructions" % (red("FAILED"), program, instr_count)
+                    ret = 1
                     break
             else:
                 print "[ %s ] %s after %d instructions" % (red("CROSSCHECK_FAILED"), program, instr_count)
@@ -113,9 +116,11 @@ def cross_check(in_a, out_a, in_b, out_b, program, trace):
                 f.write("---------------- %s ----------------\n" % emu_b);
                 f.write(output_b);
                 f.write("====================================\n");
+                ret = 2
                 break
+    return ret
 
-if __name__ == "__main__":
+def crosscheck_main():
     assert len(sys.argv) == 6, "Expect emulator a, emulator b, program to load , output crosscheck file and timeout.\n"
     emu_a = sys.argv[1]
     emu_b = sys.argv[2]
@@ -132,10 +137,18 @@ if __name__ == "__main__":
         if pid:
             in_b, out_b = get_emulator_io(pipes)
             # do cross checking
-            cross_check(in_a, out_a, in_b, out_b, program, trace)
+            return cross_check(emu_a, in_a, out_a, emu_b, in_b, out_b, program, trace)
         else:
             # emulator b
             run_emulator(pipes, emu_b, program, timeout)
     else:
         # emulator a
         run_emulator(pipes, emu_a, program, timeout)
+
+
+if __name__ == "__main__":
+    # if we failed, we return an error code
+    # so that make will stop running other tests
+    # so we do not have to scroll up to find which ones have failed
+    ret = crosscheck_main()
+    sys.exit(ret)

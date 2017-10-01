@@ -44,6 +44,7 @@ module AsyncReadMem
   endgenerate
 
   /*
+   // for debugging
   always @ (posedge clk) begin
     $fwrite(32'h80000002,"byte1= 0x%h byte2= 0x%h\n", mem[32'h402dc], mem[32'h402dd]);
       if (dw_en) begin

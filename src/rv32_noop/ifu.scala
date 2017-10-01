@@ -73,17 +73,5 @@ class IFU(implicit conf: SodorConfiguration)  extends Module
   io.pc := pc_reg
 
   // print out
-  /*
-  printf("[IFU] PC= 0x%x instr= 0x%x %c%c DASM(%x) branch_valid= %c taken= %c target= 0x%x\n",
-    pc_reg,
-    io.imem.resp.bits.data,
-    Mux(stall, Str("S"), Str(" ")), // stall
-    Mux(!io.imem.resp.valid, Str("B"), Str(" ")), // bubble
-    io.imem.resp.bits.data,
-    Mux(io.branch.valid, Str("Y"), Str("N")),
-    Mux(branch.is_taken, Str("Y"), Str("N")),
-    branch.pc_branch
-    )
-  */
-  // printf("PC= 0x%x\n", pc_reg)
+  // printf("pc= 0x%x instr= 0x%x ", pc_reg, io.imem.resp.bits.data)
 }

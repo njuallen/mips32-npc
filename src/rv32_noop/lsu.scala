@@ -56,6 +56,7 @@ class LSU(implicit conf: SodorConfiguration) extends Module
   // lsu to data memory outputs
   val dmem_req = io.dmem.req.bits
   io.dmem.req.valid := io.datain.valid
+  // printf("valid= %d ", io.datain.valid)
   dmem_req.addr  := addr
   dmem_req.data := wdata
   dmem_req.fcn := fcn

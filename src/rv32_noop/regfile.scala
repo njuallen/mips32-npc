@@ -36,6 +36,8 @@ class RegisterFile(implicit conf: SodorConfiguration) extends Module
 
   val regfile = Mem(UInt(conf.xprlen.W), 32)
 
+  // printf("waddr= %d wdata= 0x%x\n", io.waddr, io.wdata)
+
   when (io.wen && (io.waddr != 0.U))
   {
     regfile(io.waddr) := io.wdata
