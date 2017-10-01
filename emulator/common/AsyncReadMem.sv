@@ -43,10 +43,12 @@ module AsyncReadMem
   end 
   endgenerate
 
+  /*
   always @ (posedge clk) begin
-    $fwrite(32'h80000002,"mem_addr= 0x%h mem_data= 0x%h ", dataInstr_0_addr, dataInstr_0_data);
+    $fwrite(32'h80000002,"byte1= 0x%h byte2= 0x%h\n", mem[32'h402dc], mem[32'h402dd]);
       if (dw_en) begin
-        $fwrite(32'h80000002,"dw_mask= 0x%h dw_addr= 0x%h dw_data= 0x%h ", dw_mask, dw_addr, dw_data);
+        $fwrite(32'h80000002,"dw_mask= 0x%h dw_addr= 0x%h dw_data= 0x%h\n", dw_mask, dw_addr, dw_data);
       end
   end
+  */
 endmodule // AsyncReadMem

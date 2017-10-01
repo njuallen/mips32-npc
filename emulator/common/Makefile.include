@@ -64,7 +64,7 @@ cputest_out = $(addsuffix .out, $(cputest))
 cputest_vcd = $(addsuffix .vcd, $(cputest))
 cputest_crosscheck = $(addsuffix .crosscheck, $(cputest))
 
-cputest_timeout ?=3000000
+cputest_timeout ?=300000
                            
 output/%.out: $(cputest_src_dir)/%.c emulator
 	@mkdir -p output

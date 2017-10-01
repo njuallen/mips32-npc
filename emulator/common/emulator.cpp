@@ -19,10 +19,6 @@ VTop *dut_ptr = nullptr; // design under test, aka, your chisel code
 uint64_t max_cycles = 0;
 uint64_t cycle_count = 0;
 
-const char* loadmem = nullptr;
-// specify memory latency in processor cycles
-int latency = 0;
-
 bool interactive = false;
 
 FILE *vcdfile = nullptr;
@@ -32,8 +28,7 @@ std::unique_ptr<VerilatedVcdFILE> vcdfd;
 std::unique_ptr<VerilatedVcdC> tfp;
 #endif
 
-double sc_time_stamp ()
-{
+double sc_time_stamp () {
   return double(cycle_count);
 }
 
@@ -47,18 +42,7 @@ int main(int argc, char** argv) {
       vcdfile = fopen(argv[i]+2,(const char*)"w+");
     else if (arg.substr(0, 12) == "+max-cycles=")
       max_cycles = atoll(argv[i]+12);
-    else if (arg.substr(0, 9) == "+loadmem=")
-      loadmem = argv[i]+9;
-    else if (arg.substr(0, 9) == "+latency=")
-      latency = atoi(argv[i]+9);
   }
-
-  /*
-  if(!loadmem){
-    fprintf(stderr,"No binary specified for emulator\n");
-    return 1;
-  }
-  */
 
   VTop dut; // design under test, aka, your chisel code
   dut_ptr = &dut;
@@ -85,8 +69,6 @@ int main(int argc, char** argv) {
     dut_ptr->reset = 0;
   }
 
-
-  // init_mem(loadmem, latency);
   init_device();
 
   int ret = 0;
@@ -102,7 +84,7 @@ int main(int argc, char** argv) {
       printf("*** FAILED *** (timeout) after %lld cycles\n", (long long)cycle_count);
       ret = -1;
     }
-    else if (ret_code <= 1) {
+    else if (ret_code == 0) {
       printf("*** PASSED ***\n");
       ret = 0;
     }
