@@ -233,10 +233,13 @@ class AsyncScratchPadMemory(num_core_ports: Int)(implicit conf: SodorConfigurati
     crossbars(i).io.out_1.resp.bits.data := async_data.io.dataInstr(i).data
   }
 
+  /*
   printf("addr= 0x%x data= 0x%x ", async_data.io.dataInstr(DPORT).addr,
     async_data.io.dataInstr(DPORT).data)
+  */
 
   val dmem_req = crossbars(DPORT).io.out_1.req.bits
+
   async_data.io.dw.en := (dmem_req.op === S_XWR)
 
   when (crossbars(DPORT).io.out_1.req.valid && (dmem_req.op === S_XWR))

@@ -102,7 +102,7 @@ class DatPath(implicit conf: SodorConfiguration) extends Module
 
   when (io.ctl.rf_wen && (wb_addr != 0.U) && !io.ctl.exception && !io.freeze)
   {
-    // printf("wb_addr= %d ", wb_addr);
+    printf("wb_addr= %d wb_data= 0x%x ", wb_addr, wb_data);
     regfile(wb_addr) := wb_data
   }
 
@@ -143,7 +143,6 @@ class DatPath(implicit conf: SodorConfiguration) extends Module
     (io.ctl.op2_sel === OP2_IMI) -> imm_i_sext,
     (io.ctl.op2_sel === OP2_IMS) -> imm_s_sext
   )).toUInt
-
 
 
   // ALU
@@ -194,8 +193,6 @@ class DatPath(implicit conf: SodorConfiguration) extends Module
     (io.ctl.wb_sel === WB_CSR) -> csr.io.rw.rdata
   ))
 
-  // printf("dmem_data= 0x%x wb_data= 0x%x $a5= 0x%x ", io.dmem.resp.bits.data, wb_data, regfile(15.U));
-
 
   // datapath to controlpath outputs
   io.dat.inst   := inst
@@ -211,6 +208,35 @@ class DatPath(implicit conf: SodorConfiguration) extends Module
   printf("PC= 0x%x %c instr= 0x%x\n",
     pc_reg, Mux(io.imem.resp.valid, Str("Y"), Str("N")), inst
     )
+
+  /*
+  printf("$zero= 0x%x $ra= 0x%x $sp= 0x%x $gp= 0x%x\n",
+    regfile(0.U), regfile(1.U), regfile(2.U), regfile(3.U))
+
+  printf("$tp= 0x%x $t0= 0x%x $t1= 0x%x $t2= 0x%x\n",
+    regfile(4.U), regfile(5.U), regfile(6.U), regfile(7.U))
+
+
+  printf("$s0= 0x%x $s1= 0x%x $a0= 0x%x $a1= 0x%x\n",
+    regfile(8.U), regfile(9.U), regfile(10.U), regfile(11.U))
+
+  printf("$a2= 0x%x $a3= 0x%x $a4= 0x%x $a5= 0x%x\n",
+    regfile(12.U), regfile(13.U), regfile(14.U), regfile(15.U))
+
+  printf("$a6= 0x%x $a7= 0x%x $s2= 0x%x $s3= 0x%x\n",
+    regfile(16.U), regfile(17.U), regfile(18.U), regfile(19.U))
+
+  printf("$s4= 0x%x $s5= 0x%x $s6= 0x%x $s7= 0x%x\n",
+    regfile(20.U), regfile(21.U), regfile(22.U), regfile(23.U))
+
+  printf("$s8= 0x%x $s9= 0x%x $s10= 0x%x $s11= 0x%x\n",
+    regfile(24.U), regfile(25.U), regfile(26.U), regfile(27.U))
+
+  printf("$t3= 0x%x $t4= 0x%x $t5= 0x%x $t6= 0x%x\n",
+    regfile(28.U), regfile(29.U), regfile(30.U), regfile(31.U))
+
+  printf("\n")
+  */
 
   // Printout
   // pass output through the spike-dasm binary (found in riscv-tools) to turn

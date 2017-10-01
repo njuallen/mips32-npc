@@ -34,15 +34,16 @@ class MemPort2SMemBridge(addr_width:Int, data_width: Int) extends Module
   io.in.req.ready := io.out.req.ready
   smem_req.addr := mem_req.addr
   smem_req.data := mem_req.data
-  smem_req.op := MuxCase(STRB_X, Array(
+
+  smem_req.op := MuxCase(S_X, Array(
+    (fcn === M_XRD) -> S_XRD,
+    (fcn === M_XWR) -> S_XWR
+  ))
+
+  smem_req.wstrb := MuxCase(STRB_X, Array(
     (typ === MT_B) -> STRB_B,
     (typ === MT_H) -> STRB_H,
     (typ === MT_W) -> STRB_W
-  ))
-
-  smem_req.wstrb := MuxCase(S_X, Array(
-    (fcn === M_XRD) -> S_XRD,
-    (fcn === M_XWR) -> S_XWR
   ))
 
   // response
