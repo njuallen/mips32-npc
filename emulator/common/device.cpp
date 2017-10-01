@@ -24,44 +24,30 @@ static const int putc_addr = 4;
 
 extern "C" void device_tick
 (
-  unsigned char   reset,
-  unsigned char*   in_req_ready,
   unsigned char   in_req_valid,
   int  in_req_bits_addr,
   int  in_req_bits_data,
   unsigned char   in_req_bits_op,
-  unsigned char in_req_bits_wstrb,
-  unsigned char*   in_resp_valid,
-  int*   in_resp_bits_data
+  unsigned char in_req_bits_wstrb
   ) {
-  // we are always ready
-  *in_req_ready = 1;
-  if (reset)
-    *in_resp_valid = 0;
-  else {
-    if (in_req_valid) {
-      *in_resp_valid = 1;
-      *in_resp_bits_data = 0;
-      // for now, we only deal with write
-      if (in_req_bits_op == 1) {
-        switch (in_req_bits_addr) {
-          case trap_addr:
-            finished = true;
-            ret_code = in_req_bits_data;
-            break;
-          case putc_addr:
-            printf("%c", (unsigned char)in_req_bits_data);
-            break;
-          default:
-            fprintf(stderr, "%x\n", in_req_bits_addr);
-            app_error("Device: invalid address!");
-            break;
-        }
+  if (in_req_valid) {
+    // for now, we only deal with write
+    if (in_req_bits_op == 1) {
+      switch (in_req_bits_addr) {
+        case trap_addr:
+          finished = true;
+          ret_code = in_req_bits_data;
+          break;
+        case putc_addr:
+          printf("%c", (unsigned char)in_req_bits_data);
+          break;
+        default:
+          fprintf(stderr, "%x\n", in_req_bits_addr);
+          app_error("Device: invalid address!");
+          break;
       }
-      else
-        app_error("Device: read not supported!");
     }
     else
-      *in_resp_valid = 0;
+      app_error("Device: read not supported!");
   }
 }

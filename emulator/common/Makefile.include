@@ -83,8 +83,6 @@ output/%.crosscheck: $(global_tstdir)/% emulator
 	@python $(srcDir)/emulator/common/crosscheck.py $(srcDir)/emulator/rv32_1stage/emulator emulator $< $@ $(asm_test_timeout)
 
 run-cputest: $(addprefix output/, $(addsuffix .out, $(cputest)))
-	echo $(cputest)
-	echo $(cputest_src_dir)
 
 run-crosscheck-cputest: $(addprefix output/, $(addsuffix .crosscheck, $(cputest)))
 
