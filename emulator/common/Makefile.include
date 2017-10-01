@@ -75,12 +75,15 @@ output/%.out: $(cputest_src_dir)/%.c emulator
 	@rm bin.txt
 
 # crosscheck for asm-tests
-output/%.crosscheck: $(global_tstdir)/% emulator
-	@# the rv32_1stage processor is the reference implementation
-	@make -C $(srcDir)/emulator/rv32_1stage emulator
+output/%.crosscheck: $(cputest_src_dir)/%.c emulator
 	@mkdir -p output
-	@# args: emulator_a emulator_b loadmem trace_output timeout
-	@python $(srcDir)/emulator/common/crosscheck.py $(srcDir)/emulator/rv32_1stage/emulator emulator $< $@ $(asm_test_timeout)
+	@# remove the directory part and suffix part of the file, we get the test's name
+	@make -s -C $(cputest_dir) ARCH=$(AM_ARCH) ALL=$(basename $(notdir $<))
+	@cp $(cputest_build_dir)/$(basename $(notdir $<))-$(AM_ARCH).bin.txt $(srcDir)/emulator/rv32_1stage/bin.txt
+	@cp $(cputest_build_dir)/$(basename $(notdir $<))-$(AM_ARCH).bin.txt bin.txt
+	@python $(srcDir)/emulator/common/crosscheck.py $(srcDir)/emulator/rv32_1stage/emulator emulator $(basename $(notdir $<)) $@ $(cputest_timeout)
+	@rm $(srcDir)/emulator/rv32_1stage/bin.txt
+	@rm bin.txt
 
 run-cputest: $(addprefix output/, $(addsuffix .out, $(cputest)))
 

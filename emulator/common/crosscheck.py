@@ -2,6 +2,22 @@
 
 import os, sys
 
+# colors
+KNRM = "\x1B[0m"
+KRED = "\x1B[31m"
+KGRN = "\x1B[32m"
+KYEL = "\x1B[33m"
+KBLU = "\x1B[34m"
+KMAG = "\x1B[35m"
+KCYN = "\x1B[36m"
+KWHT = "\x1B[37m"
+
+def green(str):
+    return KGRN + str + KNRM
+
+def red(str):
+    return KRED + str + KNRM
+
 def run_emulator(pipes, emulator, program, timeout):
     # redirect stdin
     os.dup2(pipes[0], 0)
@@ -14,7 +30,7 @@ def run_emulator(pipes, emulator, program, timeout):
     for i in range(0, 4):
         os.close(pipes[i])
 
-    ret = os.execl(emulator, emulator, "+max-cycles=%s" % timeout, "+loadmem=%s" % program, "-d")
+    ret = os.execl(emulator, emulator, "+max-cycles=%s" % timeout, "-d")
 
 
 def get_emulator_io(pipes):
@@ -83,13 +99,15 @@ def cross_check(in_a, out_a, in_b, out_b, program, trace):
                 if code_a == 0:
                     continue
                 elif code_a == 1:
-                    print "[ PASSED ] %s after %d instructions" % (program, instr_count)
+                    # both succeeds
+                    print "[ %s ] %s after %d instructions" % (green("PASSED"), program, instr_count)
                     break
                 else:
-                    print "[ FAILED ] %s after %d instructions" % (program, instr_count)
+                    # both failed
+                    print "[ %s ] %s after %d instructions" % (red("FAILED"), program, instr_count)
                     break
             else:
-                print "[ CROSSCHECK_FAILED ] %s after %d instructions" % (program, instr_count)
+                print "[ %s ] %s after %d instructions" % (red("CROSSCHECK_FAILED"), program, instr_count)
                 f.write("================ %s ================\n" % emu_a);
                 f.write(output_a);
                 f.write("---------------- %s ----------------\n" % emu_b);
