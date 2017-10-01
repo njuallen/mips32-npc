@@ -53,10 +53,12 @@ int main(int argc, char** argv) {
       latency = atoi(argv[i]+9);
   }
 
+  /*
   if(!loadmem){
     fprintf(stderr,"No binary specified for emulator\n");
     return 1;
   }
+  */
 
   VTop dut; // design under test, aka, your chisel code
   dut_ptr = &dut;

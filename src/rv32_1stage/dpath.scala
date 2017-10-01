@@ -102,6 +102,7 @@ class DatPath(implicit conf: SodorConfiguration) extends Module
 
   when (io.ctl.rf_wen && (wb_addr != 0.U) && !io.ctl.exception && !io.freeze)
   {
+    // printf("wb_addr= %d ", wb_addr);
     regfile(wb_addr) := wb_data
   }
 
@@ -192,6 +193,8 @@ class DatPath(implicit conf: SodorConfiguration) extends Module
     (io.ctl.wb_sel === WB_PC4) -> pc_plus4,
     (io.ctl.wb_sel === WB_CSR) -> csr.io.rw.rdata
   ))
+
+  // printf("dmem_data= 0x%x wb_data= 0x%x $a5= 0x%x ", io.dmem.resp.bits.data, wb_data, regfile(15.U));
 
 
   // datapath to controlpath outputs
