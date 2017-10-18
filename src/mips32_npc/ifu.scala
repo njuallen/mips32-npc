@@ -18,10 +18,7 @@ class IFU_IO extends Bundle()
   val exception = Flipped(DecoupledIO(new WBU_IFU_EXCEPTION_IO()))
   val dmem_stall = Flipped(new LSU_IFU_IO())
   val imem = new MemPortIo(conf.xprlen, conf.xprlen)
-
-  val freeze = Input(Bool())
-  val instr_commit = Output(Bool())
-  val pc = Output(UInt(32.W))
+  val debug = Flipped(new DebugIFUIO())
 }
 
 class IFU extends Module
@@ -45,9 +42,8 @@ class IFU extends Module
   // what if there is a dead loop like this:
   // loop: jal loop
   val stall = io.dmem_stall.dmem_stall
-  val update_pc = !stall && !io.freeze
-  when (update_pc) { pc_reg := pc_next }
-  io.instr_commit := update_pc
+  val update_pc = !stall && !io.debug.freeze
+  // when (update_pc) { pc_reg := pc_next }
 
   // instruction fetch
   io.imem.req.bits.addr := pc_reg
@@ -64,11 +60,11 @@ class IFU extends Module
    * so we insert bubbles in these stages
    * BUBBLE will not change processor state
    */
-  instr.instr := Mux(io.imem.resp.valid && !io.freeze, io.imem.resp.bits.data, BUBBLE) 
+  instr.instr := Mux(io.imem.resp.valid && !io.debug.freeze, io.imem.resp.bits.data, BUBBLE) 
 
-  //// DebugLite DebugModule
-  io.pc := pc_reg
+  //// DebugModule IO
+  io.debug.pc := pc_reg
 
   // print out
-  // printf("pc= 0x%x instr= 0x%x ", pc_reg, io.imem.resp.bits.data)
+  printf("pc= 0x%x instr= 0x%x\n", pc_reg, io.imem.resp.bits.data)
 }

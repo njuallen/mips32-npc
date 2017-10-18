@@ -1,16 +1,9 @@
 package Common
 
-import chisel3._
-import chisel3.util._
-
-import Constants._
-
-case class SodorConfiguration()
-{
+object conf {
+  // we are 32bit machines
+  // both addr_width and data_width equals xprlen
   val xprlen = 32
-  val nxpr = 32
-  val nxprbits = log2Ceil(nxpr)
-  val rvc = false
-  val vm = false
-  val usingUser = false
+  val addr_width = 32
+  val data_width = 32
 }

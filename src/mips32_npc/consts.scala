@@ -30,17 +30,17 @@ package constants
     val FU_LSU = 3.asUInt(FU_TYPE_SZ.W)
     val FU_CSR = 4.asUInt(FU_TYPE_SZ.W)
 
-    // RS1 Operand Select Signal
+    // RS Operand Select Signal
     val OP1_SEL_SZ = 2
     val OP1_X   = 0.asUInt(2.W)
-    val OP1_RS1 = 0.asUInt(2.W) // Register Source #1
+    val OP1_RS = 0.asUInt(2.W) // Register Source #1
     val OP1_IMU = 1.asUInt(2.W) // immediate, U-type
     val OP1_IMZ = 2.asUInt(2.W) // Zero-extended rs1 field of inst, for CSRI instructions
 
-    // RS2 Operand Select Signal
+    // RT Operand Select Signal
     val OP2_SEL_SZ = 2
     val OP2_X   = 0.asUInt(2.W)
-    val OP2_RS2 = 0.asUInt(2.W) // Register Source #2
+    val OP2_RT = 0.asUInt(2.W) // Register Source #2
     val OP2_IMI = 1.asUInt(2.W) // immediate, I-type
     val OP2_IMS = 2.asUInt(2.W) // immediate, S-type
     val OP2_PC  = 3.asUInt(2.W) // PC

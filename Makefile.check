@@ -1,14 +1,11 @@
 ifneq ($(MAKECMDGOALS),clean) # ignore check for make clean
 
-ifeq ($(NPC_HOME),) # AM_HOME must exist
-$(error Environment variable NPC_HOME must be defined.)
+ifeq ($(AM_HOME),) # AM_HOME must exist
+$(error Environment variable AM_HOME must be defined.)
 endif
 
-ARCH ?= native
-ARCHS = $(shell ls $(AM_HOME)/am/arch/)
-
-ifeq ($(filter $(ARCHS), $(ARCH)), ) # ARCH must be valid
-$(error Invalid ARCH. Supported: $(ARCHS))
+ifeq ($(MIPS32_NEMU_HOME),) # MIPS32_NEMU_HOME must exist
+$(error Environment variable MIPS32_NEMU_HOME must be defined.)
 endif
 
 endif

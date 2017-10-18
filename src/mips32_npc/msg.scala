@@ -27,8 +27,8 @@ class IDU_ISU_IO extends Bundle
 {
   val pc = Output(UInt(conf.xprlen.W))
   val instr = Output(UInt(conf.xprlen.W))
-  val rs1 = Output(UInt(5.W))
-  val rs2 = Output(UInt(5.W))
+  val rs = Output(UInt(5.W))
+  val rt = Output(UInt(5.W))
   val rd = Output(UInt(5.W))
   val op1_sel = Output(UInt(OP1_SEL_SZ.W))
   val op2_sel = Output(UInt(OP2_SEL_SZ.W))
@@ -40,10 +40,10 @@ class IDU_ISU_IO extends Bundle
 
 class ISU_REG_IO extends Bundle
 {
-  val rs1_addr = Output(UInt(5.W))
-  val rs2_addr = Output(UInt(5.W))
-  val rs1_data = Input(UInt(conf.xprlen.W))
-  val rs2_data = Input(UInt(conf.xprlen.W))
+  val rs_addr = Output(UInt(5.W))
+  val rt_addr = Output(UInt(5.W))
+  val rs_data = Input(UInt(conf.xprlen.W))
+  val rt_data = Input(UInt(conf.xprlen.W))
   override def cloneType = { new ISU_REG_IO().asInstanceOf[this.type] }
 }
 
@@ -90,7 +90,7 @@ class ISU_CSR_IO extends Bundle
   val wdata = Output(UInt(conf.xprlen.W))
   val pc = Output(UInt(conf.xprlen.W))
   val instr = Output(UInt(conf.xprlen.W))
-  val rs1 = Output(UInt(5.W))
+  val rs = Output(UInt(5.W))
   val rd = Output(UInt(5.W))
   val exception = Output(Bool())
   val fu_op = Output(UInt(FU_OP_SZ.W))

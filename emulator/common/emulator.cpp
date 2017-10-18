@@ -157,49 +157,42 @@ int sc(unsigned int ncycle, int *ret_code) {
 // 0: success     <0: error
 // if the program ends, return code will be put in *ret_code
 int si(unsigned int ninstr, int *ret_code) {
-  int ret = 0;
-  for(int i = 0; i < ninstr;) {
-    ret = sc(1, ret_code);
+    /*
+       int ret = 0;
+       for(int i = 0; i < ninstr;) {
+       ret = sc(1, ret_code);
     // program ended
     if (ret)
-      break;
+    break;
     // check whether an instruction has committed
     if (dut_ptr->io_instr_commit)
-      i++;
-  }
-  return ret;
+    i++;
+    }
+    return ret;
+    */
+    return 0;
 }
-
-const int OP_NONE = 0;
-const int OP_READ = 1;
-const int OP_WRITE = 2;
-
-const int RESP_SUCCESS = 0;
-const int RESP_FAILURE = 1;
-const int RESP_HW_FAILURE = 2;
-
-const int REGS_START = 0;
-const int REGS_END = 31;
-const int PC = 32;
-
 
 // DebugLite Message Interface
 unsigned int send_dlmi_req(int op, int addr, int data) {
-  assert(dut_ptr->io_dl_req_ready);
-  dut_ptr->io_dl_req_valid = 1;
-  dut_ptr->io_dl_req_bits_op = op;
-  dut_ptr->io_dl_req_bits_addr = addr;
-  dut_ptr->io_dl_req_bits_data = data;
-  dut_ptr->io_dl_resp_ready = 1;
-  // run one cycle
-  // cycles used to debug does not count into cycle_count
-  dut_ptr->clock = 0;
-  dut_ptr->eval();
-  dut_ptr->clock = 1;
-  dut_ptr->eval();
-  assert(dut_ptr->io_dl_resp_valid && dut_ptr->io_dl_resp_bits_resp == RESP_SUCCESS);
-  dut_ptr->io_dl_req_valid = 0;
-  return dut_ptr->io_dl_resp_bits_data;
+    /*
+       assert(dut_ptr->io_dl_req_ready);
+       dut_ptr->io_dl_req_valid = 1;
+       dut_ptr->io_dl_req_bits_op = op;
+       dut_ptr->io_dl_req_bits_addr = addr;
+       dut_ptr->io_dl_req_bits_data = data;
+       dut_ptr->io_dl_resp_ready = 1;
+    // run one cycle
+    // cycles used to debug does not count into cycle_count
+    dut_ptr->clock = 0;
+    dut_ptr->eval();
+    dut_ptr->clock = 1;
+    dut_ptr->eval();
+    assert(dut_ptr->io_dl_resp_valid && dut_ptr->io_dl_resp_bits_resp == RESP_SUCCESS);
+    dut_ptr->io_dl_req_valid = 0;
+    return dut_ptr->io_dl_resp_bits_data;
+    */
+    return 0;
 }
 
 // read the content of a register(GPRs and PC)
@@ -208,12 +201,15 @@ unsigned int send_dlmi_req(int op, int addr, int data) {
 // 0: success     <0: error
 // if the program ends, return code will be put in *ret_code
 unsigned int read_reg(int reg_no) {
-  // first, we need to freeze the processor
-  // so that the state of the processor will not be modified
-  // while we reading these registers
-  dut_ptr->io_freeze = 1;
-  int ret = send_dlmi_req(OP_READ, reg_no, 0);
-  // unfreeze the processor
-  dut_ptr->io_freeze = 0;
-  return ret;
+    /*
+    // first, we need to freeze the processor
+    // so that the state of the processor will not be modified
+    // while we reading these registers
+    dut_ptr->io_freeze = 1;
+    int ret = send_dlmi_req(OP_READ, reg_no, 0);
+    // unfreeze the processor
+    dut_ptr->io_freeze = 0;
+    return ret;
+    */
+    return 0;
 }

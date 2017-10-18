@@ -2,12 +2,10 @@ all: emulator
 
 common := $(srcDir)/emulator/common
 
-MK_TARGET_PROC ?= rv32_1stage
-
-MK_TARGET_ARCH ?= riscv
+MK_TARGET_PROC ?= mips32_npc
 
 # the architecture used to make tests from AM
-AM_ARCH ?= riscv32-emu
+AM_ARCH ?= mips32-npc
 
 CXXFLAGS := $(CXXFLAGS) -O1 -std=c++11  -g -Wall -Werror
 

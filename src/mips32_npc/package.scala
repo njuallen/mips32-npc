@@ -9,7 +9,7 @@ import scala.math._
 //      package object rocket and remove import Constants._'s from other files
 object Constants extends
    ScalarOpConstants with
-   Common.constants.RISCVConstants with
+   Common.constants.MIPS32Constants with
    Common.MemoryOpConstants
 {
 }

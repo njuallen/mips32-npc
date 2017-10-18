@@ -20,22 +20,16 @@ import chisel3._
 import chisel3.util._
 import Common._
 
-class CoreIo extends Bundle 
+class CoreIO extends Bundle 
 {
   val imem = new MemPortIo(conf.xprlen, conf.xprlen)
   val dmem = new MemPortIo(conf.xprlen, conf.xprlen)
-  val reset = Input(Bool())
-
-  // for debugging purpose
-  val freeze = Input(Bool())
-  val instr_commit = Output(Bool())
-  val reg = Flipped(new DebugLiteRegIo())
-  val pc = Output(UInt(32.W))
+  val debug = Flipped(new DebugIO())
 }
 
 class Core extends Module
 {
-  val io = IO(new CoreIo())
+  val io = IO(new CoreIO())
 
   val ifu  = Module(new IFU())
   val idu  = Module(new IDU())
@@ -45,6 +39,7 @@ class Core extends Module
   val lsu  = Module(new LSU())
   val wbu  = Module(new WBU())
   val regfile = Module(new RegisterFile())
+  val debug = Module(new DebugModule())
 
   // main data path
   io.imem <> ifu.io.imem
@@ -69,18 +64,17 @@ class Core extends Module
   wbu.io.exception <> ifu.io.exception
 
   // regfile access
-  regfile.io.rs1_addr := isu.io.reg.rs1_addr
-  regfile.io.rs2_addr := isu.io.reg.rs2_addr
-  isu.io.reg.rs1_data := regfile.io.rs1_data
-  isu.io.reg.rs2_data := regfile.io.rs2_data
+  regfile.io.rs_addr := isu.io.reg.rs_addr
+  regfile.io.rt_addr := isu.io.reg.rt_addr
+  isu.io.reg.rs_data := regfile.io.rs_data
+  isu.io.reg.rt_data := regfile.io.rt_data
 
   regfile.io.waddr := wbu.io.reg.waddr
   regfile.io.wdata := wbu.io.reg.wdata
   regfile.io.wen := wbu.io.reg.wen
 
-  // debug path
-  ifu.io.freeze := io.freeze
-  io.pc := ifu.io.pc
-  io.instr_commit := ifu.io.instr_commit
-  regfile.io.reg <> io.reg
+  // debug data path
+  debug.io.di <> io.debug
+  debug.io.reg <> regfile.io.debug
+  debug.io.ifu <> ifu.io.debug
 }

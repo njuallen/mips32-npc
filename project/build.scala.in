@@ -2,7 +2,7 @@ import sbt._
 import Keys._
 
 object BuildSettings extends Build {
-  val buildOrganization = "berkeley"
+  val buildOrganization = "NJU"
   val buildVersion = "2.0"
   val buildScalaVersion = "2.11.7"
   val chiselVersion = System.getProperty("chiselVersion", "latest.release")
@@ -27,10 +27,8 @@ object BuildSettings extends Build {
 
   lazy val common = Project("common", file("common"), settings = buildSettings
     ++Seq(scalaSource in Compile := file("@abs_top_srcdir@/src/common")))
-  lazy val rv32_1stage = Project("rv32_1stage", file("rv32_1stage"), settings = buildSettings ++ chipSettings
-    ++Seq(scalaSource in Compile := file("@abs_top_srcdir@/src/rv32_1stage"))) dependsOn(common)
-  lazy val rv32_noop  = Project("rv32_noop", file("rv32_noop"), settings = buildSettings ++ chipSettings
-    ++Seq(scalaSource in Compile := file("@abs_top_srcdir@/src/rv32_noop"))) dependsOn(common)
+  lazy val mips32_npc = Project("mips32_npc", file("mips32_npc"), settings = buildSettings ++ chipSettings
+    ++Seq(scalaSource in Compile := file("@abs_top_srcdir@/src/mips32_npc"))) dependsOn(common)
 
   val elaborateTask = InputKey[Unit]("elaborate", "convert chisel components into backend source code")
   val makeTask = InputKey[Unit]("make", "trigger backend-specific makefile command")
@@ -40,7 +38,7 @@ object BuildSettings extends Build {
      require(args.length >= numArgs, "syntax: elaborate <component> [chisel args]")
      val projectName = pr.id
 //     val packageName = projectName //TODO: valid convention?
-     val packageName = "Sodor" //TODO: celio change
+     val packageName = "NJU"
      val componentName = args(0)
      val classLoader = new java.net.URLClassLoader(cp.map(_.data.toURL).toArray, cp.getClass.getClassLoader)
      val chiselMainClass = classLoader.loadClass("Chisel.chiselMain$")

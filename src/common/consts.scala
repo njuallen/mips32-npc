@@ -6,15 +6,15 @@ import chisel3._
 import chisel3.util._
 import scala.math._
 
-trait RISCVConstants
+trait MIPS32Constants
 {
    // abstract out instruction decode magic numbers
-   val RD_MSB  = 11
-   val RD_LSB  = 7
-   val RS1_MSB = 19
-   val RS1_LSB = 15
-   val RS2_MSB = 24
-   val RS2_LSB = 20
+   val RS_MSB = 25
+   val RS_LSB = 21
+   val RT_MSB = 20
+   val RT_LSB = 16
+   val RD_MSB  = 15
+   val RD_LSB  = 11
 
    val CSR_ADDR_MSB = 31
    val CSR_ADDR_LSB = 20

@@ -206,7 +206,8 @@ class Device extends BlackBox {
   })
 }
 
-class AsyncScratchPadMemory(num_core_ports: Int)(implicit conf: SodorConfiguration) extends Module {
+class AsyncScratchPadMemory(num_core_ports: Int) extends Module {
+  // addr and data width
   val io = IO(new Bundle {
     val core_ports = Vec(num_core_ports,
       Flipped(new MemPortIo(conf.xprlen, conf.xprlen)) )

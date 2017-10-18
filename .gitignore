@@ -4,6 +4,7 @@ emulator/*/emulator
 emulator/*/emulator-debug
 emulator/*/generated-src
 emulator/*/generated-src-debug
+emulator/*/obj_dir
 emulator/*/*.o
 emulator/*/*.a
 emulator/*/output/
