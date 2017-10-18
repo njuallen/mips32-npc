@@ -1,9 +1,7 @@
 //**************************************************************************
-// RISCV NJU Out Of Order Processor
+// MIPS32-NPC
 //--------------------------------------------------------------------------
-//
-// Zhigang Liu
-// 2017 Sep 5
+
 
 package NPC
 
@@ -24,19 +22,16 @@ class IDU extends Module
 {
   val io = IO(new IDU_IO())
   val instr = io.instr.bits.instr
-  val pc = io.instr.bits.pc
   val csignals = ListLookup(instr,
     List(N, FU_X, FU_OP_X, OP1_X, OP2_X), Array(
       /* instr | fu_type  |  fu_op  |  op1_sel  |  op2_sel */
      LUI     -> List(Y, FU_ALU,  ALU_COPY1,  OP1_IMU,  OP2_X)
-     // we are already sequentially consistent, so no need to honor the fence instruction
      ))
 
   val (val_inst: Bool) :: fu_type :: fu_op :: op1_sel :: op2_sel :: Nil = csignals
 
   // here, we do not decode instr, we leave that to ISU
   val decode = io.decode.bits
-  decode.pc := pc
   decode.instr := instr
   decode.rs := instr(RS_MSB, RS_LSB)
   decode.rt := instr(RT_MSB, RT_LSB)
@@ -45,5 +40,4 @@ class IDU extends Module
   decode.op2_sel := op2_sel
   decode.fu_type := fu_type
   decode.fu_op := fu_op
-  decode.exception := !val_inst
 }

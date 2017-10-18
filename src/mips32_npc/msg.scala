@@ -1,9 +1,6 @@
 //**************************************************************************
-// RISCV NJU Out Of Order Processor
+// MIPS32-NPC
 //--------------------------------------------------------------------------
-//
-// Zhigang Liu
-// 2017 Sep 5
 
 package NPC
 
@@ -18,14 +15,11 @@ import Common.Constants._
 // from the pov of the datapath
 class IFU_IDU_IO extends Bundle 
 {
-  val pc = Output(UInt(conf.xprlen.W))
   val instr = Output(UInt(conf.xprlen.W))
-  override def cloneType = { new IFU_IDU_IO().asInstanceOf[this.type] }
 }
 
 class IDU_ISU_IO extends Bundle 
 {
-  val pc = Output(UInt(conf.xprlen.W))
   val instr = Output(UInt(conf.xprlen.W))
   val rs = Output(UInt(5.W))
   val rt = Output(UInt(5.W))
@@ -34,17 +28,6 @@ class IDU_ISU_IO extends Bundle
   val op2_sel = Output(UInt(OP2_SEL_SZ.W))
   val fu_type = Output(UInt(FU_TYPE_SZ.W))
   val fu_op = Output(UInt(FU_OP_SZ.W))
-  val exception = Output(Bool())
-  override def cloneType = { new IDU_ISU_IO().asInstanceOf[this.type] }
-}
-
-class ISU_REG_IO extends Bundle
-{
-  val rs_addr = Output(UInt(5.W))
-  val rt_addr = Output(UInt(5.W))
-  val rs_data = Input(UInt(conf.xprlen.W))
-  val rt_data = Input(UInt(conf.xprlen.W))
-  override def cloneType = { new ISU_REG_IO().asInstanceOf[this.type] }
 }
 
 class WBU_REG_IO extends Bundle
@@ -52,7 +35,6 @@ class WBU_REG_IO extends Bundle
   val waddr = Output(UInt(5.W))
   val wdata = Output(UInt(conf.xprlen.W))
   val wen = Output(UInt(conf.xprlen.W))
-  override def cloneType = { new WBU_REG_IO().asInstanceOf[this.type] }
 }
 
 class ISU_ALU_IO extends Bundle
@@ -61,95 +43,10 @@ class ISU_ALU_IO extends Bundle
   val b = Output(UInt(conf.xprlen.W))
   val rd = Output(UInt(5.W))
   val fu_op = Output(UInt(FU_OP_SZ.W))
-  override def cloneType = { new ISU_ALU_IO().asInstanceOf[this.type] }
-}
-
-class ISU_BRU_IO extends Bundle 
-{
-  val a = Output(UInt(conf.xprlen.W))
-  val b = Output(UInt(conf.xprlen.W))
-  val pc = Output(UInt(conf.xprlen.W))
-  val offset = Output(UInt(conf.xprlen.W))
-  val rd = Output(UInt(5.W))
-  val fu_op = Output(UInt(FU_OP_SZ.W))
-  override def cloneType = { new ISU_BRU_IO().asInstanceOf[this.type] }
-}
-
-class ISU_LSU_IO extends Bundle 
-{
-  val base = Output(UInt(conf.xprlen.W))
-  val offset = Output(UInt(conf.xprlen.W))
-  val wdata = Output(UInt(conf.xprlen.W))
-  val rd = Output(UInt(5.W))
-  val fu_op = Output(UInt(FU_OP_SZ.W))
-  override def cloneType = { new ISU_LSU_IO().asInstanceOf[this.type] }
-}
-
-class ISU_CSR_IO extends Bundle 
-{
-  val wdata = Output(UInt(conf.xprlen.W))
-  val pc = Output(UInt(conf.xprlen.W))
-  val instr = Output(UInt(conf.xprlen.W))
-  val rs = Output(UInt(5.W))
-  val rd = Output(UInt(5.W))
-  val exception = Output(Bool())
-  val fu_op = Output(UInt(FU_OP_SZ.W))
-  override def cloneType = { new ISU_CSR_IO().asInstanceOf[this.type] }
 }
 
 class ALU_WBU_IO extends Bundle 
 {
   val value = Output(UInt(conf.xprlen.W))
   val rd = Output(UInt(5.W))
-  override def cloneType = { new ALU_WBU_IO().asInstanceOf[this.type] }
-}
-
-class BRU_WBU_IO extends Bundle 
-{
-  val value = Output(UInt(conf.xprlen.W))
-  val rd = Output(UInt(5.W))
-  val wen = Output(Bool())
-  val target = Output(UInt(conf.xprlen.W))
-  val is_taken = Output(Bool())
-  override def cloneType = { new BRU_WBU_IO().asInstanceOf[this.type] }
-}
-
-class LSU_WBU_IO extends Bundle 
-{
-  val value = Output(UInt(conf.xprlen.W))
-  val rd = Output(UInt(5.W))
-  val wen = Output(Bool())
-  override def cloneType = { new LSU_WBU_IO().asInstanceOf[this.type] }
-}
-
-class CSR_WBU_IO extends Bundle 
-{
-  val value = Output(UInt(conf.xprlen.W))
-  val rd = Output(UInt(5.W))
-  val wen = Output(Bool())
-  // new pc when raising an exception or eret
-  val evec = Output(UInt(conf.xprlen.W))
-  // whether an exception or eret is raised
-  val eret = Output(Bool())
-  override def cloneType = { new CSR_WBU_IO().asInstanceOf[this.type] }
-}
-
-class WBU_IFU_BRANCH_IO extends Bundle 
-{
-  val pc_branch = Output(UInt(conf.xprlen.W))
-  val is_taken = Output(Bool())
-  override def cloneType = { new WBU_IFU_BRANCH_IO().asInstanceOf[this.type] }
-}
-
-class WBU_IFU_EXCEPTION_IO extends Bundle 
-{
-  val evec = Output(UInt(conf.xprlen.W))
-  val eret = Output(Bool())
-  override def cloneType = { new WBU_IFU_EXCEPTION_IO().asInstanceOf[this.type] }
-}
-
-class LSU_IFU_IO extends Bundle 
-{
-  val dmem_stall = Output(Bool())
-  override def cloneType = { new LSU_IFU_IO().asInstanceOf[this.type] }
 }

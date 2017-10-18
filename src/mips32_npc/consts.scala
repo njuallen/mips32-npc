@@ -1,9 +1,6 @@
 //**************************************************************************
-// RISCV Processor Constants
+// MIPS32-NPC Processor Constants
 //--------------------------------------------------------------------------
-//
-// Christopher Celio
-// 2011 May 28
 
 package NPC
 package constants
@@ -77,44 +74,5 @@ package constants
     val LSU_SW  = 5.asUInt(FU_OP_SZ.W)
     val LSU_SB  = 6.asUInt(FU_OP_SZ.W)
     val LSU_SH  = 7.asUInt(FU_OP_SZ.W)
-
-    // CSR Operation Signal
-
-    val CSR_CSRRWI = 0.asUInt(FU_OP_SZ.W)
-    val CSR_CSRRSI = 1.asUInt(FU_OP_SZ.W)
-    val CSR_CSRRCI = 2.asUInt(FU_OP_SZ.W)
-    val CSR_CSRRW  = 3.asUInt(FU_OP_SZ.W)
-    val CSR_CSRRS  = 4.asUInt(FU_OP_SZ.W)
-    val CSR_CSRRC  = 5.asUInt(FU_OP_SZ.W)
-    val CSR_ECALL  = 6.asUInt(FU_OP_SZ.W)
-    val CSR_MRET   = 7.asUInt(FU_OP_SZ.W)
-    val CSR_DRET   = 8.asUInt(FU_OP_SZ.W)
-    val CSR_EBREAK = 9.asUInt(FU_OP_SZ.W)
-
-    // Memory Function Type (Read,Write,Fence) Signal
-    val MWR_R   = 0.asUInt(2.W)
-    val MWR_W   = 1.asUInt(2.W)
-    val MWR_F   = 2.asUInt(2.W)
-    val MWR_X   = 0.asUInt(2.W)
-
-    // Memory Mask Type Signal
-    val MSK_B   = 0.asUInt(3.W)
-    val MSK_BU  = 1.asUInt(3.W)
-    val MSK_H   = 2.asUInt(3.W)
-    val MSK_HU  = 3.asUInt(3.W)
-    val MSK_W   = 4.asUInt(3.W)
-    val MSK_X   = 4.asUInt(3.W)
-
-    // Cache Flushes & Sync Primitives
-    val M_N      = 0.asUInt(3.W)
-    val M_SI     = 1.asUInt(3.W)   // synch instruction stream
-    val M_SD     = 2.asUInt(3.W)   // synch data stream
-    val M_FA     = 3.asUInt(3.W)   // flush all caches
-    val M_FD     = 4.asUInt(3.W)   // flush data cache
-
-    // Memory Functions (read, write, fence)
-    val MT_READ  = 0.asUInt(2.W)
-    val MT_WRITE = 1.asUInt(2.W)
-    val MT_FENCE = 2.asUInt(2.W)
   }
 }

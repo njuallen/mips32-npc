@@ -1,9 +1,6 @@
 //**************************************************************************
-// RISCV NJU Out Of Order Processor
+// MIPS32-NPC
 //--------------------------------------------------------------------------
-//
-// Zhigang Liu
-// 2017 Sep 5
 
 package NPC
 
@@ -28,18 +25,7 @@ class ALU extends Module
   val alu_op1 = datain.a
   val alu_op2 = datain.b
   val alu_op = datain.fu_op
-  val alu_shamt = alu_op2(4,0).toUInt
   val alu_out = MuxCase(0.U, Array(
-    (alu_op === ALU_ADD)  -> (alu_op1 + alu_op2).toUInt,
-    (alu_op === ALU_SUB)  -> (alu_op1 - alu_op2).toUInt,
-    (alu_op === ALU_AND)  -> (alu_op1 & alu_op2).toUInt,
-    (alu_op === ALU_OR)   -> (alu_op1 | alu_op2).toUInt,
-    (alu_op === ALU_XOR)  -> (alu_op1 ^ alu_op2).toUInt,
-    (alu_op === ALU_SLT)  -> (alu_op1.toSInt < alu_op2.toSInt).toUInt,
-    (alu_op === ALU_SLTU) -> (alu_op1 < alu_op2).toUInt,
-    (alu_op === ALU_SLL)  -> ((alu_op1 << alu_shamt)(conf.xprlen - 1, 0)).toUInt,
-    (alu_op === ALU_SRA)  -> (alu_op1.toSInt >> alu_shamt).toUInt,
-    (alu_op === ALU_SRL)  -> (alu_op1 >> alu_shamt).toUInt,
     (alu_op === ALU_COPY1)-> alu_op1
   ))
 
@@ -56,5 +42,5 @@ class ALU extends Module
     alu_op,
     alu_out
     )
-   */
+    */
 }
